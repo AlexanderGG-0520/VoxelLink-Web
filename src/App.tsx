@@ -6,7 +6,7 @@ const iconUrl = voxellinkIcon;
 const topics = [
   {
     title: "遊ぶ",
-    text: "公開中のMinecraft Java Editionサーバーで遊べます。遊び方や環境の違いも前提にして話します。",
+    text: "公開中のMinecraft Java Editionサーバーで遊べます。遊び方の違いも前提にして話します。",
   },
   {
     title: "作る",
@@ -23,7 +23,6 @@ const fitItems = [
   "Modpackやサーバー構成を考えるのが好き",
   "少人数の場所で話したい",
   "分からないことも、落ち着いて相談したい",
-  "PCゲームや創作の話もしたい",
 ];
 
 const notFitItems = [
@@ -98,10 +97,6 @@ function App() {
         <div className="section-heading">
           <p className="section-kicker">できること</p>
           <h2 id="activities-title">参加したあとにできること。</h2>
-          <p>
-            VoxelLinkは、Minecraftで遊ぶ場所であり、環境を整えたり、作ったり、
-            技術の話を続けたりできる場所でもあります。
-          </p>
         </div>
         <div className="activity-list">
           {topics.map((topic) => (
@@ -119,9 +114,6 @@ function App() {
           <h2>Minecraftを中心に、遊びと運用と制作が近い場所。</h2>
         </div>
         <div className="section-body">
-          <p>
-            VoxelLinkは、Minecraftで遊ぶこと、環境を整えること、作ることが近いDiscordコミュニティです。
-          </p>
           <p>
             話題ごとに部屋を分けすぎると便利そうに見えますが、
             Modpackの相性からサーバー負荷、Linuxの設定、ちょっとしたツール作りへ
@@ -156,13 +148,12 @@ function App() {
           <h2 id="servers-title">立てて終わりにしない。</h2>
           <p>
             サーバーは立てれば終わりではありません。バックアップ、権限、負荷、
-            公開範囲を見ながら、管理できる形を選びます。
+            公開範囲を見ながら運用します。
           </p>
-          <p>自由に公開するだけの場所ではなく、安全性と続けやすさを優先します。</p>
         </div>
         <div className="server-panel" aria-hidden="true">
           <span>サーバー運用</span>
-          <strong>管理</strong>
+          <strong>継続運用</strong>
           <small>バックアップ / 権限 / 負荷 / 公開範囲</small>
         </div>
       </section>
@@ -174,18 +165,11 @@ function App() {
         </div>
         <div className="section-body policy-body">
           <p>
-            人が増えること自体は悪いことではありません。ただ、速い雑談だけで流れてしまうと、
-            Modpackの構成やサーバー運用のような少し細かい話は残りにくくなります。
-            VoxelLinkでは、人数を追うことより、会話が残る距離感を大切にします。
+            人数を増やすことより、細かい話も流れずに残る距離感を大切にします。
           </p>
           <p>
-            サーバー公開や外部接続は便利ですが、IP露出やポート開放などのリスクもあります。
-            MinecraftサーバーもWebサービスに近い性質を持つので、勢いだけで公開せず、
-            管理できる形を選びます。
-          </p>
-          <p>
-            ルールは縛るためではなく、同じ場所で長く遊び続けるためにあります。
-            技術や経験に差があっても、質問や相談が雑に扱われない空気を大切にします。
+            ルールは縛るためではなく、同じ場所で長く遊ぶための土台です。
+            質問や相談が雑に扱われず、サーバー公開や外部接続も安全性を考えて扱います。
           </p>
         </div>
       </section>
@@ -194,10 +178,7 @@ function App() {
         <p className="section-kicker">参加</p>
         <h2 id="join-title">この空気が合いそうなら、覗いてみてください。</h2>
         <p>
-          Minecraftで遊ぶだけでなく、環境を整えたり、サーバーを考えたり、
-          小さく作ったものを見せたりするのが好きなら、VoxelLinkは合うかもしれません。
-          参加したら、短く自己紹介しても、公開中のサーバーを見に行っても、
-          気になる技術の話を眺めるところからでも大丈夫です。
+          最初は会話を眺めるところからでも大丈夫です。
         </p>
         <ul className="first-step-list" aria-label="参加後にできること">
           {firstSteps.map((step) => (

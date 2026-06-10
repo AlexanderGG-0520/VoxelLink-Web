@@ -482,7 +482,7 @@ h3 {
 
 .server-panel strong {
   color: #8cf0c9;
-  font-size: clamp(3.6rem, 9vw, 5.6rem);
+  font-size: clamp(2.7rem, 5vw, 4.4rem);
   line-height: 1;
 }
 
