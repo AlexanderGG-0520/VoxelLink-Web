@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 import voxellinkIcon from "./assets/voxellink-icon.png";
 
 const inviteUrl = "https://discord.gg/6Vy4V5hMdk";
+const monthlySupportUrl = "https://buy.stripe.com/dRm14m58k6SDbpV0ks9IQ00";
+const extraSupportUrl = "https://buy.stripe.com/3cIfZg1W890LbpVc3a9IQ01";
 const iconUrl = voxellinkIcon;
 const lastUpdated = "2026年6月17日";
 
@@ -58,6 +60,14 @@ const termsLead =
 
 const privacyLead =
   "VoxelLinkで扱う可能性のある情報と、その利用目的を実用的な範囲で説明します。";
+
+const supportPoints = [
+  "Minecraft、Fluxer、コミュニティの基本的な利用は、支払いで制限されません。",
+  "支援は任意です。参加や利用のために、支援プランを購入する必要はありません。",
+  "支援は、サーバー、ドメイン、インフラ、コミュニティ運営にかかる費用の助けになります。",
+  "支援しても、特別扱い、モデレーションの免除、サービスの常時稼働は保証されません。",
+  "将来的にSupporterロールやプロフィール表示などを追加する可能性はありますが、未実装の特典を確約するものではありません。",
+];
 
 type LegalSectionData = {
   title: string;
@@ -192,6 +202,14 @@ function App() {
         <LegalPage title="プライバシーポリシー" lead={privacyLead}>
           <LegalSections sections={privacySections} />
         </LegalPage>
+      </SiteFrame>
+    );
+  }
+
+  if (path === "/support") {
+    return (
+      <SiteFrame>
+        <SupportPage />
       </SiteFrame>
     );
   }
@@ -347,10 +365,12 @@ function SiteFrame({ children }: SiteFrameProps) {
               <a href="#about">概要</a>
               <a href="#activities">できること</a>
               <a href="#servers">サーバー</a>
+              <a href="/support">支援</a>
             </>
           ) : (
             <>
               <a href="/">トップ</a>
+              <a href="/support">支援</a>
               <a href="/terms">利用規約</a>
               <a href="/privacy">プライバシー</a>
             </>
@@ -369,11 +389,63 @@ function SiteFrame({ children }: SiteFrameProps) {
           <span>Modded Minecraftを中心に、遊ぶこと・組むこと・作ることが近いDiscordコミュニティ。</span>
         </div>
         <nav className="footer-links" aria-label="フッターナビゲーション">
+          <a href="/support">支援プラン</a>
           <a href="/terms">利用規約</a>
           <a href="/privacy">プライバシーポリシー</a>
         </nav>
       </footer>
     </main>
+  );
+}
+
+function SupportPage() {
+  return (
+    <article className="section support-page">
+      <div className="support-header">
+        <p className="section-kicker">Supporter</p>
+        <h1>VoxelLinkを支援する</h1>
+        <p>
+          VoxelLinkは無料で使えます。支援プランは、コミュニティを無理なく続けていくための任意のサポートです。
+        </p>
+      </div>
+
+      <section className="support-panel" aria-labelledby="support-about-title">
+        <div className="support-copy">
+          <h2 id="support-about-title">支援について</h2>
+          <p>
+            サーバーを動かし続けたり、ドメインや周辺インフラを維持したりするには、少しずつ費用がかかります。
+            もしVoxelLinkの場所づくりを応援したいと思ったら、支援プランから参加できます。
+          </p>
+        </div>
+        <ul className="support-point-list">
+          {supportPoints.map((point) => (
+            <li key={point}>{point}</li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="support-actions-section" aria-labelledby="support-actions-title">
+        <div className="support-copy">
+          <p className="section-kicker">Payment</p>
+          <h2 id="support-actions-title">支援プランを選ぶ</h2>
+          <p>
+            決済はStripeの安全な決済ページで処理されます。解約や支払い管理はStripeの案内に従って行います。
+          </p>
+        </div>
+        <div className="support-actions">
+          <a className="button button-primary" href={monthlySupportUrl} target="_blank" rel="noreferrer">
+            月額支援プラン
+          </a>
+          <a className="button button-secondary" href={extraSupportUrl} target="_blank" rel="noreferrer">
+            追加支援プラン
+          </a>
+        </div>
+        <p className="support-legal-note">
+          支援プランの購入には、このサイトの<a href="/terms">利用規約</a>と
+          <a href="/privacy">プライバシーポリシー</a>が適用されます。
+        </p>
+      </section>
+    </article>
   );
 }
 
