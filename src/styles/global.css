@@ -5,24 +5,52 @@
   --color-ink-soft: #091522;
   --color-panel: #0b1827;
   --color-panel-solid: #101d2c;
+  --color-panel-elevated: #0a1728;
   --color-line: rgb(180 211 221 / 12%);
   --color-line-strong: rgb(106 225 236 / 22%);
   --color-copy: #f5f9ff;
   --color-muted: #aebfca;
+  --color-copy-secondary: #d7e4ec;
+  --color-navigation: #bfd1dc;
+  --color-legal-link: #9df1f5;
+  --color-legal-link-hover: #c7fbfd;
   --color-cyan: #66e1ec;
+  --color-positive: #8cf0c9;
   --color-grass: #75a95c;
   --color-caution: #e6bd72;
-  --font-sans: Inter, "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Yu Gothic", system-ui, sans-serif;
+  --font-sans:
+    Inter, "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Yu Gothic",
+    system-ui, sans-serif;
 }
 
 @layer base {
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body { @apply m-0 min-w-80 bg-ink font-sans leading-7 text-copy antialiased; }
-  a { @apply text-inherit no-underline; }
-  :focus-visible { @apply outline-2 outline-offset-4 outline-cyan; }
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply m-0 min-w-80 bg-ink font-sans leading-7 text-copy antialiased;
+  }
+
+  a {
+    @apply text-inherit no-underline;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-4 outline-cyan;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, ::before, ::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+  *,
+  ::before,
+  ::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

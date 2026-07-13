@@ -24,4 +24,5 @@ export const footerNavigation: NavigationItem[] = [
   { label: "プライバシーポリシー", to: "/privacy" },
 ];
 
-export const siteDescription = "Modded Minecraftを中心に、遊ぶこと・組むこと・作ることが近いDiscordコミュニティ。";
+export const siteDescription =
+  "Modded Minecraftを中心に、遊ぶこと・組むこと・作ることが近いDiscordコミュニティ。";
