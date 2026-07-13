@@ -2,4 +2,99 @@ import { Link } from "react-router-dom";
 import { ButtonLink } from "../components/ui/ButtonLink";
 import { supportPoints } from "../data/home";
 import { siteUrls } from "../data/site";
-export function SupportPage() { return <article className="mx-auto w-[min(980px,calc(100%-2rem))] py-12 sm:w-[min(980px,calc(100%-2.5rem))] sm:py-18"><header className="grid gap-4 border-b border-line pb-8"><p className="text-xs font-extrabold tracking-wide text-cyan">Supporter</p><h1 className="text-[clamp(2.7rem,7vw,5.1rem)] leading-none font-bold tracking-tight">VoxelLinkを支援する</h1><p className="text-muted">VoxelLinkは無料で使えます。支援プランは、コミュニティを無理なく続けていくための任意のサポートです。</p></header><section className="mt-8 grid gap-6 rounded-lg border border-line bg-[#0a1728] p-6 sm:p-8" aria-labelledby="support-about-title"><div className="grid gap-3.5"><h2 id="support-about-title" className="text-2xl font-bold sm:text-4xl">支援について</h2><p className="text-muted">サーバーを動かし続けたり、ドメインや周辺インフラを維持したりするには、少しずつ費用がかかります。もしVoxelLinkの場所づくりを応援したいと思ったら、支援プランから参加できます。</p></div><ul className="grid gap-3">{supportPoints.map((point) => <li className="relative pl-6 text-[#d7e4ec] before:absolute before:left-0 before:top-3 before:size-2 before:bg-cyan before:shadow-[3px_3px_0_rgb(0_0_0_/_18%)] before:content-['']" key={point}>{point}</li>)}</ul></section><section className="mt-8 grid gap-6 rounded-lg border border-line bg-[#0a1728] p-6 sm:p-8" aria-labelledby="support-actions-title"><div className="grid gap-3.5"><p className="text-xs font-extrabold tracking-wide text-cyan">Payment</p><h2 id="support-actions-title" className="text-2xl font-bold sm:text-4xl">支援プランを選ぶ</h2><p className="text-muted">決済はStripeの安全な決済ページで処理されます。解約や支払い管理はStripeの案内に従って行います。</p></div><div className="flex flex-wrap gap-3 max-sm:[&>a]:w-full"><ButtonLink href={siteUrls.monthlySupport} target="_blank" rel="noopener noreferrer">月額支援プラン</ButtonLink><ButtonLink href={siteUrls.extraSupport} target="_blank" rel="noopener noreferrer" variant="secondary">追加支援プラン</ButtonLink></div><p className="text-sm text-muted">支援プランの購入には、このサイトの<Link className="font-extrabold text-[#9df1f5] underline decoration-[#9df1f5]/35 underline-offset-4 hover:text-[#c7fbfd]" to="/terms">利用規約</Link>と<Link className="font-extrabold text-[#9df1f5] underline decoration-[#9df1f5]/35 underline-offset-4 hover:text-[#c7fbfd]" to="/privacy">プライバシーポリシー</Link>が適用されます。</p></section></article>; }
+export function SupportPage() {
+  return (
+    <article className="mx-auto w-[min(980px,calc(100%_-_2rem))] py-12 sm:w-[min(980px,calc(100%_-_2.5rem))] sm:py-18">
+      <header className="grid gap-4 border-b border-line pb-8">
+        <p className="text-xs font-extrabold tracking-wide text-cyan">
+          Supporter
+        </p>
+        <h1 className="text-[clamp(2.7rem,7vw,5.1rem)] leading-none font-bold tracking-tight">
+          VoxelLinkを支援する
+        </h1>
+        <p className="text-muted">
+          VoxelLinkは無料で使えます。支援プランは、コミュニティを無理なく続けていくための任意のサポートです。
+        </p>
+      </header>
+      <section
+        className="mt-8 grid gap-6 rounded-lg border border-line bg-panel-elevated p-6 sm:p-8"
+        aria-labelledby="support-about-title"
+      >
+        <div className="grid gap-3.5">
+          <h2
+            id="support-about-title"
+            className="text-2xl font-bold sm:text-4xl"
+          >
+            支援について
+          </h2>
+          <p className="text-muted">
+            サーバーを動かし続けたり、ドメインや周辺インフラを維持したりするには、少しずつ費用がかかります。もしVoxelLinkの場所づくりを応援したいと思ったら、支援プランから参加できます。
+          </p>
+        </div>
+        <ul className="grid gap-3">
+          {supportPoints.map((point) => (
+            <li
+              className="relative pl-6 text-copy-secondary before:absolute before:left-0 before:top-3 before:size-2 before:bg-cyan before:shadow-[3px_3px_0_rgb(0_0_0_/_18%)] before:content-['']"
+              key={point}
+            >
+              {point}
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section
+        className="mt-8 grid gap-6 rounded-lg border border-line bg-panel-elevated p-6 sm:p-8"
+        aria-labelledby="support-actions-title"
+      >
+        <div className="grid gap-3.5">
+          <p className="text-xs font-extrabold tracking-wide text-cyan">
+            Payment
+          </p>
+          <h2
+            id="support-actions-title"
+            className="text-2xl font-bold sm:text-4xl"
+          >
+            支援プランを選ぶ
+          </h2>
+          <p className="text-muted">
+            決済はStripeの安全な決済ページで処理されます。解約や支払い管理はStripeの案内に従って行います。
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-3 max-sm:[&>a]:w-full">
+          <ButtonLink
+            href={siteUrls.monthlySupport}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            月額支援プラン
+          </ButtonLink>
+          <ButtonLink
+            href={siteUrls.extraSupport}
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="secondary"
+          >
+            追加支援プラン
+          </ButtonLink>
+        </div>
+        <p className="text-sm text-muted">
+          支援プランの購入には、このサイトの
+          <Link
+            className="font-extrabold text-legal-link underline decoration-legal-link/35 underline-offset-4 hover:text-legal-link-hover"
+            to="/terms"
+          >
+            利用規約
+          </Link>
+          と
+          <Link
+            className="font-extrabold text-legal-link underline decoration-legal-link/35 underline-offset-4 hover:text-legal-link-hover"
+            to="/privacy"
+          >
+            プライバシーポリシー
+          </Link>
+          が適用されます。
+        </p>
+      </section>
+    </article>
+  );
+}
