@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: voxellink
+      POSTGRES_USER: voxellink
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes: [postgres-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    command: ["node", "server/migrate.mjs"]
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?set DATABASE_URL in .env}
+    depends_on:
+      postgres: { condition: service_healthy }
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?set DATABASE_URL in .env}
+      VOXELLINK_MONITOR_TOKEN: ${VOXELLINK_MONITOR_TOKEN:?set VOXELLINK_MONITOR_TOKEN in .env}
+      VOXELLINK_ADMIN_TOKEN: ${VOXELLINK_ADMIN_TOKEN:?set VOXELLINK_ADMIN_TOKEN in .env}
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+    ports: ["${API_PORT:-3000}:3000"]
+volumes:
+  postgres-data:
