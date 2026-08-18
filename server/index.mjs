@@ -10,8 +10,17 @@ const discordClientId = required("DISCORD_CLIENT_ID");
 const discordClientSecret = required("DISCORD_CLIENT_SECRET");
 const publicBaseUrl = required("PUBLIC_BASE_URL").replace(/\/$/, "");
 const sessionSecret = required("SESSION_SECRET");
+const monitorImport = monitorImportConfig();
 const oauthStates = new Map();
 app.use(express.json({ limit: "64kb" }));
+if (monitorImport) {
+  void flushMonitorImports();
+  setInterval(() => void flushMonitorImports(), 30_000).unref();
+} else {
+  console.warn(
+    "Monitor import delivery is disabled; configure both VOXELLINK_MONITOR_IMPORT_* variables",
+  );
+}
 
 app.get("/healthz", async (_request, response) => {
   try {
@@ -132,7 +141,12 @@ app.post("/api/v1/servers", requireSession, async (request, response, next) => {
       "INSERT INTO listed_server_members (server_id, discord_user_id, role) VALUES ($1::uuid, $2, 'owner')",
       [inserted.rows[0].id, request.user.id],
     );
+    await client.query(
+      "INSERT INTO monitor_import_jobs (server_id) VALUES ($1::uuid) ON CONFLICT (server_id) DO UPDATE SET attempts = 0, next_attempt_at = now(), imported_at = NULL, last_error = NULL, updated_at = now()",
+      [inserted.rows[0].id],
+    );
     await client.query("COMMIT");
+    if (monitorImport) void flushMonitorImports();
     response
       .status(201)
       .json({ server: { ...inserted.rows[0], role: "owner" } });
@@ -226,6 +240,72 @@ function required(name) {
   const value = process.env[name];
   if (!value) throw new Error(`${name} must be set`);
   return value;
+}
+function monitorImportConfig() {
+  const baseUrl = process.env.VOXELLINK_MONITOR_IMPORT_URL?.replace(/\/$/, "");
+  const token = process.env.VOXELLINK_MONITOR_IMPORT_TOKEN;
+  if (!baseUrl && !token) return null;
+  if (!baseUrl || !token)
+    throw new Error(
+      "VOXELLINK_MONITOR_IMPORT_URL and VOXELLINK_MONITOR_IMPORT_TOKEN must be set together",
+    );
+  return { baseUrl, token };
+}
+let flushingMonitorImports = false;
+async function flushMonitorImports() {
+  if (!monitorImport || flushingMonitorImports) return;
+  flushingMonitorImports = true;
+  try {
+    const jobs = await pool.query(
+      "SELECT server_id::text, attempts FROM monitor_import_jobs WHERE imported_at IS NULL AND next_attempt_at <= now() ORDER BY created_at LIMIT 20",
+    );
+    for (const job of jobs.rows) await deliverMonitorImport(job);
+  } catch (error) {
+    console.error("Monitor import queue failed", error);
+  } finally {
+    flushingMonitorImports = false;
+  }
+}
+async function deliverMonitorImport(job) {
+  try {
+    const response = await fetch(
+      `${monitorImport.baseUrl}/api/v1/integrations/voxellink/import`,
+      {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${monitorImport.token}`,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ external_server_id: job.server_id }),
+        signal: AbortSignal.timeout(10_000),
+      },
+    );
+    if (!response.ok)
+      throw new Error(`Monitor returned HTTP ${response.status}`);
+    await pool.query(
+      "UPDATE monitor_import_jobs SET imported_at = now(), last_error = NULL, updated_at = now() WHERE server_id = $1::uuid",
+      [job.server_id],
+    );
+  } catch (error) {
+    const attempts = Number(job.attempts) + 1;
+    const retryAfterMs = Math.min(
+      60 * 60 * 1000,
+      30_000 * 2 ** Math.min(attempts - 1, 7),
+    );
+    await pool.query(
+      "UPDATE monitor_import_jobs SET attempts = $2, next_attempt_at = $3, last_error = $4, updated_at = now() WHERE server_id = $1::uuid",
+      [
+        job.server_id,
+        attempts,
+        new Date(Date.now() + retryAfterMs),
+        String(error).slice(0, 500),
+      ],
+    );
+    console.warn("Monitor import delivery failed", {
+      serverId: job.server_id,
+      attempts,
+    });
+  }
 }
 function requireBearer(expected) {
   return (request, response, next) => {

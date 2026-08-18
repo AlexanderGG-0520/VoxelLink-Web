@@ -27,3 +27,7 @@ Discord Developer PortalでOAuth2のリダイレクトURLを`https://<公開URL>
 `GET /api/v1/monitor/servers/{server_id}` requires `Authorization: Bearer <VOXELLINK_MONITOR_TOKEN>` and returns the published listing and its verified Discord members. It contains no Cloudflare credentials. Set the same value as `VOXELLINK_API_TOKEN` in VoxelLink Monitor.
 
 The endpoint matches the [Monitor integration contract](https://github.com/AlexanderGG-0520/voxellink-monitor/blob/main/docs/voxellink-integration.md).
+
+### Automatic Monitor imports
+
+Set `VOXELLINK_MONITOR_IMPORT_URL` to the public Monitor API URL and `VOXELLINK_MONITOR_IMPORT_TOKEN` to its `INTEGRATION_SYNC_TOKEN`. Each new listing is persisted to a durable delivery queue, imported immediately when Monitor is available, and retried with exponential backoff when it is not.
