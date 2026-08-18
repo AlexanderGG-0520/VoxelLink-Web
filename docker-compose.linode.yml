@@ -2,6 +2,13 @@
 # existing cloudflared container and exposes PostgreSQL only to Monitor on a
 # separate private Docker network.
 services:
+  api:
+    environment:
+      VOXELLINK_MONITOR_IMPORT_URL: http://monitor-api:8080
+    networks:
+      default: {}
+      voxellink-edge:
+        aliases: [voxellink-api]
   web:
     networks:
       - default
