@@ -12,6 +12,10 @@ docker compose up --build
 
 The `migrate` service applies PostgreSQL schema migrations before the API starts.
 
+### Linode single-host deployment
+
+Create the external Docker networks `voxellink-edge` and `voxellink-data`, then start the stack with `docker-compose.linode.yml` in addition to the default Compose file. The `web` service joins `voxellink-edge` for the existing `cloudflared` Tunnel. PostgreSQL joins only `voxellink-data`, where VoxelLink Monitor uses the `voxellink-postgres` alias and a separate database.
+
 ### 掲載者コンソール
 
 Discord Developer PortalでOAuth2のリダイレクトURLを`https://<公開URL>/auth/discord/callback`に設定し、`.env`へ`DISCORD_CLIENT_ID`、`DISCORD_CLIENT_SECRET`、`PUBLIC_BASE_URL`、十分に長い`SESSION_SECRET`を設定します。公開サイトの`/console`からDiscordでログインすると、本人を最初の`owner`として掲載を登録できます。

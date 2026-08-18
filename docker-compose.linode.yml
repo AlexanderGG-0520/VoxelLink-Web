@@ -1,0 +1,19 @@
+# Linode deployment overlay. It makes the public web service reachable by the
+# existing cloudflared container and exposes PostgreSQL only to Monitor on a
+# separate private Docker network.
+services:
+  web:
+    networks:
+      - default
+      - voxellink-edge
+  postgres:
+    networks:
+      default: {}
+      voxellink-data:
+        aliases: [voxellink-postgres]
+
+networks:
+  voxellink-edge:
+    external: true
+  voxellink-data:
+    external: true
