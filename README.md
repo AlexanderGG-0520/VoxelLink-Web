@@ -12,19 +12,11 @@ docker compose up --build
 
 The `migrate` service applies PostgreSQL schema migrations before the API starts.
 
-### Bootstrap a listing
+### 掲載者コンソール
 
-`POST /api/v1/admin/servers` is intentionally a bootstrap-only administration API secured by `VOXELLINK_ADMIN_TOKEN`. It creates a listing plus explicit Discord owner/manager/viewer memberships. Discord OAuth owner administration is the next layer; it will replace this endpoint's operator-only workflow.
+Discord Developer PortalでOAuth2のリダイレクトURLを`https://<公開URL>/auth/discord/callback`に設定し、`.env`へ`DISCORD_CLIENT_ID`、`DISCORD_CLIENT_SECRET`、`PUBLIC_BASE_URL`、十分に長い`SESSION_SECRET`を設定します。公開サイトの`/console`からDiscordでログインすると、本人を最初の`owner`として掲載を登録できます。
 
-```json
-{
-  "name": "Example Server",
-  "hostname": "play.example.com",
-  "port": 25565,
-  "transport": "DIRECT",
-  "members": [{ "discord_user_id": "123456789", "role": "owner" }]
-}
-```
+掲載のownerは、DiscordユーザーIDを指定してowner / manager / viewerを追加できます。掲載者向けの共通管理トークンはありません。
 
 ### VoxelLink Monitor contract
 

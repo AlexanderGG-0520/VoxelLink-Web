@@ -43,6 +43,13 @@ export function Header() {
         ))}
       </nav>
       <div className="flex items-center gap-3">
+        <Link
+          className="hidden text-sm font-extrabold text-cyan sm:inline-flex"
+          to="/console"
+          onClick={closeMenu}
+        >
+          管理
+        </Link>
         <a
           className="hidden min-h-10 rounded-md border border-line-strong bg-cyan/5 px-4 py-2 text-sm font-extrabold text-[#e9fdff] transition hover:bg-cyan/10 sm:inline-flex"
           href={siteUrls.discordInvite}
