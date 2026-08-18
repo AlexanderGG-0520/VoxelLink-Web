@@ -12,6 +12,7 @@ const publicBaseUrl = required("PUBLIC_BASE_URL").replace(/\/$/, "");
 const sessionSecret = required("SESSION_SECRET");
 const monitorImport = monitorImportConfig();
 const oauthStates = new Map();
+let flushingMonitorImports = false;
 app.use(express.json({ limit: "64kb" }));
 if (monitorImport) {
   void flushMonitorImports();
@@ -251,7 +252,6 @@ function monitorImportConfig() {
     );
   return { baseUrl, token };
 }
-let flushingMonitorImports = false;
 async function flushMonitorImports() {
   if (!monitorImport || flushingMonitorImports) return;
   flushingMonitorImports = true;
