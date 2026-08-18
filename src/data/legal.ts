@@ -2,13 +2,14 @@ export type LegalSectionData = {
   title: string;
   paragraphs: string[];
   items?: string[];
-  contactLink?: boolean;
+  contactLinks?: boolean;
 };
 
-export const lastUpdated = "2026年6月17日";
+export const lastUpdated = "2026年8月18日";
 export const legalContactText =
-  "現在利用できる公開の連絡方法は、VoxelLinkのDiscordコミュニティです。規約、利用、削除依頼、プライバシーに関する相談は、Discordから管理者へ連絡してください。";
+  "運営者はVoxelLink運営です。規約、利用、削除依頼、プライバシーに関する相談は、下記のメールアドレスまたはDiscordから連絡してください。メールは、Discordを利用できない場合を含む正式な問い合わせ窓口です。";
 export const legalContactLinkText = "Discordに参加して連絡する";
+export const legalEmailLinkText = "メールで問い合わせる";
 export const termsLead =
   "VoxelLinkを安心して使い続けるための基本的な約束です。コミュニティ、Minecraftサーバー、関連する自ホストサービスを利用する前に確認してください。";
 export const privacyLead =
@@ -19,6 +20,7 @@ export const termsSections: LegalSectionData[] = [
     title: "1. VoxelLinkについて",
     paragraphs: [
       "VoxelLinkは、Minecraftプレイヤー、クリエイター、技術系ユーザー、および関連コミュニティのためのコミュニティプラットフォームです。Minecraftサーバー、コミュニティサービス、自ホストのチャット基盤などと接続して利用される場合があります。",
+      "VoxelLinkはVoxelLink運営が提供する非公式サービスです。Mojang、Microsoft、Minecraftとは提携・承認・関連していません。",
     ],
   },
   {
@@ -59,14 +61,14 @@ export const termsSections: LegalSectionData[] = [
       "ルールや本規約は、運用状況、機能追加、法令や外部サービスの変更に応じて更新されることがあります。重要な変更がある場合は、可能な範囲でコミュニティ内またはサイト上で案内します。",
     ],
   },
-  { title: "7. 連絡先", paragraphs: [legalContactText], contactLink: true },
+  { title: "7. 連絡先", paragraphs: [legalContactText], contactLinks: true },
 ];
 
 export const privacySections: LegalSectionData[] = [
   {
     title: "1. 運営形態",
     paragraphs: [
-      "VoxelLinkは、VoxelLinkコミュニティのために運用される自ホスト基盤です。Minecraft、チャット、コミュニティ機能、関連する外部連携を提供するために必要な情報を扱うことがあります。",
+      "VoxelLinkは、VoxelLink運営がVoxelLinkコミュニティのために運用する自ホスト基盤です。Minecraft、チャット、コミュニティ機能、関連する外部連携を提供するために必要な情報を扱うことがあります。VoxelLinkはMojang、Microsoft、Minecraftとは提携・承認・関連していません。",
     ],
   },
   {
@@ -109,7 +111,7 @@ export const privacySections: LegalSectionData[] = [
     paragraphs: [
       `${legalContactText} 内容や技術的な制約によって、対応に時間がかかる場合や、すべてのログを即時削除できない場合があります。`,
     ],
-    contactLink: true,
+    contactLinks: true,
   },
   {
     title: "7. ポリシーの更新",

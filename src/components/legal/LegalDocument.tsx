@@ -1,5 +1,9 @@
 import type { LegalSectionData } from "../../data/legal";
-import { lastUpdated, legalContactLinkText } from "../../data/legal";
+import {
+  lastUpdated,
+  legalContactLinkText,
+  legalEmailLinkText,
+} from "../../data/legal";
 import { siteUrls } from "../../data/site";
 
 type LegalDocumentProps = {
@@ -43,8 +47,14 @@ export function LegalDocument({ title, lead, sections }: LegalDocumentProps) {
                 ))}
               </ul>
             ) : null}
-            {section.contactLink ? (
-              <p>
+            {section.contactLinks ? (
+              <div className="flex flex-wrap gap-x-5 gap-y-2">
+                <a
+                  className="font-extrabold text-legal-link underline decoration-legal-link/35 underline-offset-4 hover:text-legal-link-hover"
+                  href={`mailto:${siteUrls.contactEmail}`}
+                >
+                  {legalEmailLinkText}: {siteUrls.contactEmail}
+                </a>
                 <a
                   className="font-extrabold text-legal-link underline decoration-legal-link/35 underline-offset-4 hover:text-legal-link-hover"
                   href={siteUrls.discordInvite}
@@ -53,7 +63,7 @@ export function LegalDocument({ title, lead, sections }: LegalDocumentProps) {
                 >
                   {legalContactLinkText}
                 </a>
-              </p>
+              </div>
             ) : null}
           </section>
         ))}

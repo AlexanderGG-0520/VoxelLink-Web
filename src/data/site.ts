@@ -7,6 +7,7 @@ export type NavigationItem = {
 
 export const siteUrls = {
   discordInvite: "https://discord.gg/6Vy4V5hMdk",
+  contactEmail: "uket.panda.1st@gmail.com",
   monthlySupport: "https://buy.stripe.com/dRm14m58k6SDbpV0ks9IQ00",
   extraSupport: "https://buy.stripe.com/3cIfZg1W890LbpVc3a9IQ01",
 } as const;
@@ -26,3 +27,6 @@ export const footerNavigation: NavigationItem[] = [
 
 export const siteDescription =
   "Modded Minecraftを中心に、遊ぶこと・組むこと・作ることが近いDiscordコミュニティ。";
+
+export const minecraftDisclaimer =
+  "VoxelLinkは非公式のコミュニティサービスであり、Mojang、Microsoft、Minecraftとは提携・承認・関連していません。";

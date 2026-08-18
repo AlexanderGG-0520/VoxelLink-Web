@@ -78,6 +78,9 @@ export function SupportPage() {
           </ButtonLink>
         </div>
         <p className="text-sm text-muted">
+          支援は任意であり、Minecraftサーバーやコミュニティ機能の利用、ゲーム内での優位性、特典の提供を条件にしません。
+        </p>
+        <p className="text-sm text-muted">
           支援プランの購入には、このサイトの
           <Link
             className="font-extrabold text-legal-link underline decoration-legal-link/35 underline-offset-4 hover:text-legal-link-hover"
@@ -94,6 +97,23 @@ export function SupportPage() {
           </Link>
           が適用されます。
         </p>
+      </section>
+      <section
+        className="mt-8 grid gap-3 rounded-lg border border-line bg-panel p-6 sm:p-8"
+        aria-labelledby="support-contact-title"
+      >
+        <h2 id="support-contact-title" className="text-2xl font-bold">
+          お問い合わせ
+        </h2>
+        <p className="text-muted">
+          支援、規約、プライバシーに関するお問い合わせは、メールでも受け付けています。
+        </p>
+        <a
+          className="w-max font-extrabold text-legal-link underline decoration-legal-link/35 underline-offset-4 hover:text-legal-link-hover"
+          href={`mailto:${siteUrls.contactEmail}`}
+        >
+          {siteUrls.contactEmail}
+        </a>
       </section>
     </article>
   );
