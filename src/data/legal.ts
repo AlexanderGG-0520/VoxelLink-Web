@@ -20,7 +20,7 @@ export const termsSections: LegalSectionData[] = [
     title: "1. VoxelLinkについて",
     paragraphs: [
       "VoxelLinkは、Minecraftプレイヤー、クリエイター、技術系ユーザー、および関連コミュニティのためのコミュニティプラットフォームです。Minecraftサーバー、コミュニティサービス、自ホストのチャット基盤などと接続して利用される場合があります。",
-      "VoxelLinkはVoxelLink運営が提供する非公式サービスです。Mojang、Microsoft、Minecraftとは提携・承認・関連していません。",
+      "VoxelLinkは公式Minecraftサービスではありません。MojangまたはMicrosoftによる承認・提携・関連はありません。",
     ],
   },
   {
@@ -68,7 +68,7 @@ export const privacySections: LegalSectionData[] = [
   {
     title: "1. 運営形態",
     paragraphs: [
-      "VoxelLinkは、VoxelLink運営がVoxelLinkコミュニティのために運用する自ホスト基盤です。Minecraft、チャット、コミュニティ機能、関連する外部連携を提供するために必要な情報を扱うことがあります。VoxelLinkはMojang、Microsoft、Minecraftとは提携・承認・関連していません。",
+      "VoxelLinkは、VoxelLink運営がVoxelLinkコミュニティのために運用する自ホスト基盤です。Minecraft、チャット、コミュニティ機能、関連する外部連携を提供するために必要な情報を扱うことがあります。VoxelLinkは公式Minecraftサービスではありません。MojangまたはMicrosoftによる承認・提携・関連はありません。",
     ],
   },
   {

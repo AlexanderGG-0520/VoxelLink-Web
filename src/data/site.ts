@@ -29,4 +29,4 @@ export const siteDescription =
   "Modded Minecraftを中心に、遊ぶこと・組むこと・作ることが近いDiscordコミュニティ。";
 
 export const minecraftDisclaimer =
-  "VoxelLinkは非公式のコミュニティサービスであり、Mojang、Microsoft、Minecraftとは提携・承認・関連していません。";
+  "VoxelLinkは公式Minecraftサービスではありません。MojangまたはMicrosoftによる承認・提携・関連はありません。";
