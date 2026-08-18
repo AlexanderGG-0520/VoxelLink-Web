@@ -10,3 +10,7 @@ CREATE TABLE monitor_import_jobs (
 
 CREATE INDEX monitor_import_jobs_pending ON monitor_import_jobs (next_attempt_at)
 WHERE imported_at IS NULL;
+
+INSERT INTO monitor_import_jobs (server_id)
+SELECT id FROM listed_servers
+ON CONFLICT (server_id) DO NOTHING;
