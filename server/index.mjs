@@ -51,12 +51,28 @@ app.get("/auth/discord/callback", async (request, response, next) => {
         redirect_uri: `${publicBaseUrl}/auth/discord/callback`,
       }),
     });
-    if (!tokenResponse.ok) return response.redirect("/console?error=oauth");
+    if (!tokenResponse.ok) {
+      console.warn("Discord OAuth token exchange rejected", {
+        status: tokenResponse.status,
+        statusText: tokenResponse.statusText,
+      });
+      return response.redirect("/console?error=oauth");
+    }
     const token = await tokenResponse.json();
+    if (typeof token.access_token !== "string") {
+      console.warn("Discord OAuth token response had no access token");
+      return response.redirect("/console?error=oauth");
+    }
     const userResponse = await fetch("https://discord.com/api/users/@me", {
       headers: { authorization: `Bearer ${token.access_token}` },
     });
-    if (!userResponse.ok) return response.redirect("/console?error=oauth");
+    if (!userResponse.ok) {
+      console.warn("Discord OAuth user lookup rejected", {
+        status: userResponse.status,
+        statusText: userResponse.statusText,
+      });
+      return response.redirect("/console?error=oauth");
+    }
     const user = await userResponse.json();
     if (!user.id || typeof user.id !== "string")
       return response.redirect("/console?error=oauth");
