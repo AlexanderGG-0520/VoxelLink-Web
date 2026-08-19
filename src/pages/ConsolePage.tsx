@@ -85,7 +85,18 @@ export function ConsolePage() {
         </h2>
         {servers.length ? (
           servers.map((server) => (
-            <ServerCard key={server.id} server={server} onError={setMessage} />
+            <ServerCard
+              key={server.id}
+              server={server}
+              onError={setMessage}
+              onUpdated={(updated) =>
+                setServers((current) =>
+                  current.map((item) =>
+                    item.id === updated.id ? { ...updated, role: item.role } : item,
+                  ),
+                )
+              }
+            />
           ))
         ) : (
           <p className="rounded-lg border border-line bg-panel p-6 text-muted">
@@ -229,10 +240,36 @@ function NewServer({
 function ServerCard({
   server,
   onError,
+  onUpdated,
 }: {
   server: Server;
   onError: (message: string) => void;
+  onUpdated: (server: Omit<Server, "role">) => void;
 }) {
+  const updateListing = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const response = await fetch(`/api/v1/servers/${server.id}`, {
+      method: "PUT",
+      credentials: "include",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        name: form.get("name"),
+        hostname: form.get("hostname"),
+        port: Number(form.get("port")),
+        transport: form.get("transport"),
+        public_slug: form.get("public_slug") || null,
+        description: form.get("description"),
+        rules_content: form.get("rules_content"),
+        official_rules_url: form.get("official_rules_url") || null,
+        published: form.get("published") === "on",
+      }),
+    });
+    if (!response.ok)
+      return onError("掲載を更新できませんでした。入力内容と編集権限を確認してください。");
+    onUpdated((await response.json()).server);
+    onError("掲載を更新しました。モニターへの同期を予約しました。");
+  };
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
@@ -271,6 +308,32 @@ function ServerCard({
           </a>
         ) : null}
       </div>
+      {server.role === "owner" || server.role === "manager" ? (
+        <form className="grid gap-4 sm:grid-cols-2" onSubmit={updateListing}>
+          <Field label="表示名" name="name" defaultValue={server.name} required />
+          <Field label="ホスト名" name="hostname" defaultValue={server.hostname} required />
+          <Field label="ポート" name="port" type="number" defaultValue={server.port} min="1" max="65535" required />
+          <label className="grid gap-2 text-sm font-bold">
+            接続方式
+            <select className="rounded border border-line bg-panel-solid p-3 text-copy" name="transport" defaultValue={server.transport}>
+              <option value="DIRECT">直接接続</option>
+              <option value="CLOUDFLARE_TUNNEL">Cloudflare Tunnel</option>
+              <option value="CLOUDFLARE_SPECTRUM">Cloudflare Spectrum</option>
+            </select>
+          </label>
+          <Field className="sm:col-span-2" label="公開URL用スラッグ" name="public_slug" defaultValue={server.public_slug ?? ""} pattern="[a-z0-9]+(-[a-z0-9]+)*" />
+          <Field className="sm:col-span-2" label="公式規約URL" name="official_rules_url" type="url" defaultValue={server.official_rules_url ?? ""} />
+          <TextAreaField className="sm:col-span-2" label="サーバー説明" name="description" defaultValue={server.description} rows={4} />
+          <TextAreaField className="sm:col-span-2" label="ルール本文" name="rules_content" defaultValue={server.rules_content} rows={12} />
+          <label className="flex items-center gap-3 text-sm font-bold sm:col-span-2">
+            <input name="published" type="checkbox" defaultChecked={server.published} />
+            この掲載を公開する
+          </label>
+          <button className="rounded-md bg-cyan px-5 py-3 font-extrabold text-[#062126] sm:col-span-2" type="submit">
+            変更を保存
+          </button>
+        </form>
+      ) : null}
       {server.role === "owner" ? (
         <form
           className="grid gap-3 sm:grid-cols-[1fr_10rem_auto]"
