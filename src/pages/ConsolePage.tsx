@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
-import type { InputHTMLAttributes } from "react";
+import type { InputHTMLAttributes, TextareaHTMLAttributes } from "react";
 
 type Server = {
   id: string;
@@ -8,6 +8,10 @@ type Server = {
   port: number;
   transport: string;
   published: boolean;
+  public_slug: string | null;
+  description: string;
+  rules_content: string;
+  official_rules_url: string | null;
   role: string;
 };
 
@@ -133,6 +137,10 @@ function NewServer({
         hostname: form.get("hostname"),
         port: Number(form.get("port")),
         transport: form.get("transport"),
+        public_slug: form.get("public_slug") || null,
+        description: form.get("description"),
+        rules_content: form.get("rules_content"),
+        official_rules_url: form.get("official_rules_url") || null,
       }),
     });
     if (!response.ok)
@@ -179,6 +187,34 @@ function NewServer({
             <option value="CLOUDFLARE_SPECTRUM">Cloudflare Spectrum</option>
           </select>
         </label>
+        <Field
+          label="公開URL用スラッグ"
+          name="public_slug"
+          placeholder="my-server"
+          pattern="[a-z0-9]+(-[a-z0-9]+)*"
+          help="英小文字・数字・ハイフン。設定するとルールページを公開します。"
+        />
+        <Field
+          label="公式規約URL"
+          name="official_rules_url"
+          type="url"
+          placeholder="https://example.com/rules"
+        />
+        <TextAreaField
+          className="sm:col-span-2"
+          label="サーバー説明"
+          name="description"
+          placeholder="サーバーの特徴や参加方法を入力します。"
+          rows={4}
+        />
+        <TextAreaField
+          className="sm:col-span-2"
+          label="ルール本文"
+          name="rules_content"
+          placeholder="## 基本ルール\n- 他プレイヤーに配慮してください。\n\n## 禁止事項\n- チートの使用"
+          rows={12}
+          help="見出しは「## 見出し」、箇条書きは「- 内容」で入力できます。"
+        />
         <button
           className="rounded-md bg-cyan px-5 py-3 font-extrabold text-[#062126] sm:col-span-2"
           type="submit"
@@ -224,6 +260,16 @@ function ServerCard({
           {server.hostname}:{server.port} ・ {server.transport} ・ あなたの権限:{" "}
           {server.role}
         </p>
+        {server.public_slug ? (
+          <a
+            className="w-max text-sm font-bold text-cyan underline"
+            href={`/servers/${server.public_slug}/rules`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            公開中のルールページを開く
+          </a>
+        ) : null}
       </div>
       {server.role === "owner" ? (
         <form
@@ -260,9 +306,12 @@ function ServerCard({
 }
 
 function Field(
-  props: InputHTMLAttributes<HTMLInputElement> & { label: string },
+  props: InputHTMLAttributes<HTMLInputElement> & {
+    label: string;
+    help?: string;
+  },
 ) {
-  const { label, ...input } = props;
+  const { label, help, ...input } = props;
   return (
     <label className="grid gap-2 text-sm font-bold">
       {label}
@@ -270,6 +319,28 @@ function Field(
         className="rounded border border-line bg-panel-solid p-3 font-normal text-copy"
         {...input}
       />
+      {help ? <span className="font-normal text-muted">{help}</span> : null}
+    </label>
+  );
+}
+
+function TextAreaField({
+  label,
+  help,
+  className = "",
+  ...textarea
+}: TextareaHTMLAttributes<HTMLTextAreaElement> & {
+  label: string;
+  help?: string;
+}) {
+  return (
+    <label className={`grid gap-2 text-sm font-bold ${className}`}>
+      {label}
+      <textarea
+        className="rounded border border-line bg-panel-solid p-3 font-normal text-copy"
+        {...textarea}
+      />
+      {help ? <span className="font-normal text-muted">{help}</span> : null}
     </label>
   );
 }

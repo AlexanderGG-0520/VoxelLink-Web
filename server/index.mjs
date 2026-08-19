@@ -106,6 +106,22 @@ app.post("/auth/logout", (_request, response) => {
   response.sendStatus(204);
 });
 
+app.get(
+  "/api/v1/public/servers/:slug/rules",
+  async (request, response, next) => {
+    try {
+      const listing = await pool.query(
+        "SELECT name, hostname, port, description, rules_content, official_rules_url, public_slug FROM listed_servers WHERE public_slug = $1 AND published",
+        [request.params.slug],
+      );
+      if (!listing.rowCount) return response.sendStatus(404);
+      return response.json({ server: listing.rows[0] });
+    } catch (error) {
+      return next(error);
+    }
+  },
+);
+
 app.get("/api/v1/me", optionalSession, (request, response) => {
   if (!request.user) return response.sendStatus(401);
   response.json({ user: request.user });
@@ -117,7 +133,7 @@ app.get(
   async (request, response, next) => {
     try {
       const result = await pool.query(
-        "SELECT s.id::text, s.name, s.hostname, s.port, s.transport::text, s.published, m.role::text FROM listed_servers s JOIN listed_server_members m ON m.server_id = s.id WHERE m.discord_user_id = $1 ORDER BY s.created_at DESC",
+        "SELECT s.id::text, s.name, s.hostname, s.port, s.transport::text, s.published, s.public_slug, s.description, s.rules_content, s.official_rules_url, m.role::text FROM listed_servers s JOIN listed_server_members m ON m.server_id = s.id WHERE m.discord_user_id = $1 ORDER BY s.created_at DESC",
         [request.user.id],
       );
       response.json({ servers: result.rows });
@@ -135,8 +151,17 @@ app.post("/api/v1/servers", requireSession, async (request, response, next) => {
   try {
     await client.query("BEGIN");
     const inserted = await client.query(
-      "INSERT INTO listed_servers (name, hostname, port, transport) VALUES ($1, $2, $3, $4::listing_transport) RETURNING id::text, name, hostname, port, transport::text, published",
-      [listing.name, listing.hostname, listing.port, listing.transport],
+      "INSERT INTO listed_servers (name, hostname, port, transport, public_slug, description, rules_content, official_rules_url) VALUES ($1, $2, $3, $4::listing_transport, $5, $6, $7, $8) RETURNING id::text, name, hostname, port, transport::text, published, public_slug, description, rules_content, official_rules_url",
+      [
+        listing.name,
+        listing.hostname,
+        listing.port,
+        listing.transport,
+        listing.publicSlug,
+        listing.description,
+        listing.rulesContent,
+        listing.officialRulesUrl,
+      ],
     );
     await client.query(
       "INSERT INTO listed_server_members (server_id, discord_user_id, role) VALUES ($1::uuid, $2, 'owner')",
@@ -223,7 +248,16 @@ app.listen(
 );
 
 function validateListing(value) {
-  const { name, hostname, port = 25565, transport = "DIRECT" } = value ?? {};
+  const {
+    name,
+    hostname,
+    port = 25565,
+    transport = "DIRECT",
+    public_slug: publicSlug = null,
+    description = "",
+    rules_content: rulesContent = "",
+    official_rules_url: officialRulesUrl = null,
+  } = value ?? {};
   if (
     typeof name !== "string" ||
     !name.trim() ||
@@ -232,10 +266,30 @@ function validateListing(value) {
     !Number.isInteger(port) ||
     port < 1 ||
     port > 65535 ||
+    (publicSlug !== null &&
+      (typeof publicSlug !== "string" ||
+        !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(publicSlug))) ||
+    typeof description !== "string" ||
+    description.length > 5000 ||
+    typeof rulesContent !== "string" ||
+    rulesContent.length > 20000 ||
+    (officialRulesUrl !== null &&
+      (typeof officialRulesUrl !== "string" ||
+        officialRulesUrl.length > 2048 ||
+        !/^https:\/\//.test(officialRulesUrl))) ||
     !["DIRECT", "CLOUDFLARE_TUNNEL", "CLOUDFLARE_SPECTRUM"].includes(transport)
   )
     return null;
-  return { name: name.trim(), hostname: hostname.trim(), port, transport };
+  return {
+    name: name.trim(),
+    hostname: hostname.trim(),
+    port,
+    transport,
+    publicSlug: publicSlug?.trim() || null,
+    description: description.trim(),
+    rulesContent: rulesContent.trim(),
+    officialRulesUrl: officialRulesUrl?.trim() || null,
+  };
 }
 function required(name) {
   const value = process.env[name];

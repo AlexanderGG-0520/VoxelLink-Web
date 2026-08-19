@@ -6,6 +6,7 @@ import { NotFoundPage } from "../pages/NotFoundPage";
 import { PrivacyPage } from "../pages/PrivacyPage";
 import { SupportPage } from "../pages/SupportPage";
 import { TermsPage } from "../pages/TermsPage";
+import { ServerRulesPage } from "../pages/ServerRulesPage";
 export const router = createBrowserRouter([
   {
     element: <SiteLayout />,
@@ -15,6 +16,7 @@ export const router = createBrowserRouter([
       { path: "/support", element: <SupportPage /> },
       { path: "/terms", element: <TermsPage /> },
       { path: "/privacy", element: <PrivacyPage /> },
+      { path: "/servers/:slug/rules", element: <ServerRulesPage /> },
       { path: "*", element: <NotFoundPage /> },
     ],
   },
