@@ -184,6 +184,43 @@ app.post("/api/v1/servers", requireSession, async (request, response, next) => {
   }
 });
 
+app.put(
+  "/api/v1/servers/:serverId",
+  requireSession,
+  async (request, response, next) => {
+    const listing = validateListing(request.body);
+    if (!listing)
+      return response.status(400).json({ error: "invalid server payload" });
+    try {
+      const updated = await pool.query(
+        "UPDATE listed_servers s SET name = $1, hostname = $2, port = $3, transport = $4::listing_transport, public_slug = $5, description = $6, rules_content = $7, official_rules_url = $8, published = $9, updated_at = now() FROM listed_server_members m WHERE s.id = $10::uuid AND m.server_id = s.id AND m.discord_user_id = $11 AND m.role IN ('owner', 'manager') RETURNING s.id::text, s.name, s.hostname, s.port, s.transport::text, s.published, s.public_slug, s.description, s.rules_content, s.official_rules_url",
+        [
+          listing.name,
+          listing.hostname,
+          listing.port,
+          listing.transport,
+          listing.publicSlug,
+          listing.description,
+          listing.rulesContent,
+          listing.officialRulesUrl,
+          listing.published,
+          request.params.serverId,
+          request.user.id,
+        ],
+      );
+      if (!updated.rowCount) return response.sendStatus(403);
+      await pool.query(
+        "INSERT INTO monitor_import_jobs (server_id) VALUES ($1::uuid) ON CONFLICT (server_id) DO UPDATE SET attempts = 0, next_attempt_at = now(), imported_at = NULL, last_error = NULL, updated_at = now()",
+        [request.params.serverId],
+      );
+      if (monitorImport) void flushMonitorImports();
+      return response.json({ server: updated.rows[0] });
+    } catch (error) {
+      return next(error);
+    }
+  },
+);
+
 app.post(
   "/api/v1/servers/:serverId/members",
   requireSession,
@@ -257,6 +294,7 @@ function validateListing(value) {
     description = "",
     rules_content: rulesContent = "",
     official_rules_url: officialRulesUrl = null,
+    published = true,
   } = value ?? {};
   if (
     typeof name !== "string" ||
@@ -273,6 +311,7 @@ function validateListing(value) {
     description.length > 5000 ||
     typeof rulesContent !== "string" ||
     rulesContent.length > 20000 ||
+    typeof published !== "boolean" ||
     (officialRulesUrl !== null &&
       (typeof officialRulesUrl !== "string" ||
         officialRulesUrl.length > 2048 ||
@@ -289,6 +328,7 @@ function validateListing(value) {
     description: description.trim(),
     rulesContent: rulesContent.trim(),
     officialRulesUrl: officialRulesUrl?.trim() || null,
+    published,
   };
 }
 function required(name) {
