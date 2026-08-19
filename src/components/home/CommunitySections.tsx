@@ -6,6 +6,7 @@ import {
 } from "../../data/home";
 import { siteUrls } from "../../data/site";
 import { ButtonLink } from "../ui/ButtonLink";
+import { Link } from "react-router-dom";
 import { ListPanel } from "../ui/ListPanel";
 import { SectionHeading } from "../ui/SectionHeading";
 const sectionClass =
@@ -77,23 +78,24 @@ export function ServerSection() {
           id="servers-title"
           className="text-3xl leading-tight font-bold tracking-tight sm:text-5xl"
         >
-          立てて終わりにしない。
+          今すぐ遊べるサーバー。
         </h2>
         <p className="text-muted">
-          サーバーは立てれば終わりではありません。バックアップ、権限、負荷、公開範囲を見ながら運用します。
+          生活・建築・冒険を自分のペースで楽しめる、Alec SMP 2! を公開中です。
         </p>
       </div>
-      <div
-        className="grid min-h-48 place-items-center rounded-lg border border-line bg-[linear-gradient(180deg,rgb(102_225_236_/_3.5%),transparent_64%),#101d2c] p-6 text-center"
-        aria-hidden="true"
-      >
-        <span className="font-extrabold text-muted">サーバー運用</span>
-        <strong className="text-[clamp(2.7rem,5vw,4.4rem)] leading-none text-positive">
-          継続運用
-        </strong>
-        <small className="font-extrabold text-muted">
-          バックアップ / 権限 / 負荷 / 公開範囲
-        </small>
+      <div className="grid min-h-48 content-center justify-items-start gap-3 rounded-lg border border-line bg-[linear-gradient(180deg,rgb(102_225_236_/_3.5%),transparent_64%),#101d2c] p-6">
+        <span className="text-xs font-extrabold tracking-wide text-cyan">
+          SURVIVAL MULTIPLAYER
+        </span>
+        <strong className="text-3xl leading-none text-copy">Alec SMP 2!</strong>
+        <span className="text-sm text-muted">Minecraft 26.2 / Fabric</span>
+        <Link
+          className="mt-2 rounded-md border border-line-strong bg-cyan/10 px-4 py-2 text-sm font-extrabold text-cyan transition hover:bg-cyan/20"
+          to="/servers/alec-smp-2/rules"
+        >
+          ルール・参加情報を見る
+        </Link>
       </div>
     </section>
   );
