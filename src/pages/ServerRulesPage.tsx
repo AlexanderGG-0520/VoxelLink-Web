@@ -9,6 +9,13 @@ type PublicServer = {
   description: string;
   rules_content: string;
   official_rules_url: string | null;
+  monitor_status: MonitorStatus | null;
+};
+type MonitorStatus = {
+  status: "OPERATIONAL" | "DEGRADED" | "OUTAGE" | "MAINTENANCE" | "UNKNOWN";
+  last_checked_at: string | null;
+  latency_ms: number;
+  uptime_24h: number;
 };
 
 export function ServerRulesPage() {
@@ -64,6 +71,7 @@ export function ServerRulesPage() {
               {server.hostname}:{server.port}
             </strong>
           </p>
+          <MonitorSummary status={server.monitor_status} />
         </div>
       </header>
       <div className="grid gap-7 pt-8">
@@ -80,6 +88,40 @@ export function ServerRulesPage() {
         ) : null}
       </div>
     </main>
+  );
+}
+
+function MonitorSummary({ status }: { status: MonitorStatus | null }) {
+  if (!status) {
+    return <p className="mt-3 text-muted">現在の接続状況は取得できません。</p>;
+  }
+  const labels = {
+    OPERATIONAL: "正常稼働中",
+    DEGRADED: "一部で問題を確認中",
+    OUTAGE: "障害を確認中",
+    MAINTENANCE: "メンテナンス中",
+    UNKNOWN: "監視結果を確認中",
+  };
+  const color =
+    status.status === "OPERATIONAL"
+      ? "text-emerald-300"
+      : status.status === "OUTAGE"
+        ? "text-red-300"
+        : "text-amber-300";
+  return (
+    <div className="mt-4 border-t border-line pt-4">
+      <p className={`font-extrabold ${color}`}>{labels[status.status]}</p>
+      <p className="mt-1 text-muted">
+        直近24時間の稼働率 {status.uptime_24h.toFixed(2)}%
+        {status.last_checked_at
+          ? ` ・ 最終確認 ${new Intl.DateTimeFormat("ja-JP", {
+              dateStyle: "short",
+              timeStyle: "short",
+            }).format(new Date(status.last_checked_at))}`
+          : " ・ まだ確認結果がありません"}
+        {status.latency_ms > 0 ? ` ・ ${status.latency_ms}ms` : ""}
+      </p>
+    </div>
   );
 }
 
