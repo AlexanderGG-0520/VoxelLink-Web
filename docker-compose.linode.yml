@@ -5,6 +5,7 @@ services:
   api:
     environment:
       VOXELLINK_MONITOR_IMPORT_URL: http://monitor-api:8080
+      VOXELLINK_MONITOR_PUBLIC_URL: http://monitor-api:8080
     networks:
       default: {}
       voxellink-edge:

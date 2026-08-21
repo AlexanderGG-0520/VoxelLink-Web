@@ -13,6 +13,11 @@ type Server = {
   rules_content: string;
   official_rules_url: string | null;
   role: string;
+  monitor_status: MonitorStatus | null;
+};
+type MonitorStatus = {
+  status: "OPERATIONAL" | "DEGRADED" | "OUTAGE" | "MAINTENANCE" | "UNKNOWN";
+  uptime_24h: number;
 };
 
 export function ConsolePage() {
@@ -270,6 +275,7 @@ function ServerCard({
             公開中のルールページを開く
           </a>
         ) : null}
+        <MonitorStatusLine status={server.monitor_status} />
       </div>
       {server.role === "owner" ? (
         <form
@@ -302,6 +308,30 @@ function ServerCard({
         </form>
       ) : null}
     </article>
+  );
+}
+
+function MonitorStatusLine({ status }: { status: MonitorStatus | null }) {
+  if (!status) {
+    return <p className="mt-2 text-sm text-muted">監視結果はまだありません。</p>;
+  }
+  const labels = {
+    OPERATIONAL: "正常稼働中",
+    DEGRADED: "一部で問題を確認中",
+    OUTAGE: "障害を確認中",
+    MAINTENANCE: "メンテナンス中",
+    UNKNOWN: "監視結果を確認中",
+  };
+  const color =
+    status.status === "OPERATIONAL"
+      ? "text-emerald-300"
+      : status.status === "OUTAGE"
+        ? "text-red-300"
+        : "text-amber-300";
+  return (
+    <p className={`mt-2 text-sm font-bold ${color}`}>
+      監視: {labels[status.status]} ・ 直近24時間 {status.uptime_24h.toFixed(2)}%
+    </p>
   );
 }
 

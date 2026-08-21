@@ -11,6 +11,7 @@ const discordClientSecret = required("DISCORD_CLIENT_SECRET");
 const publicBaseUrl = required("PUBLIC_BASE_URL").replace(/\/$/, "");
 const sessionSecret = required("SESSION_SECRET");
 const monitorImport = monitorImportConfig();
+const monitorStatus = monitorStatusConfig();
 const oauthStates = new Map();
 let flushingMonitorImports = false;
 app.use(express.json({ limit: "64kb" }));
@@ -115,7 +116,7 @@ app.get(
         [request.params.slug],
       );
       if (!listing.rowCount) return response.sendStatus(404);
-      return response.json({ server: listing.rows[0] });
+      return response.json({ server: await withMonitorStatus(listing.rows[0]) });
     } catch (error) {
       return next(error);
     }
@@ -136,7 +137,9 @@ app.get(
         "SELECT s.id::text, s.name, s.hostname, s.port, s.transport::text, s.published, s.public_slug, s.description, s.rules_content, s.official_rules_url, m.role::text FROM listed_servers s JOIN listed_server_members m ON m.server_id = s.id WHERE m.discord_user_id = $1 ORDER BY s.created_at DESC",
         [request.user.id],
       );
-      response.json({ servers: result.rows });
+      response.json({
+        servers: await Promise.all(result.rows.map(withMonitorStatus)),
+      });
     } catch (error) {
       next(error);
     }
@@ -305,6 +308,41 @@ function monitorImportConfig() {
       "VOXELLINK_MONITOR_IMPORT_URL and VOXELLINK_MONITOR_IMPORT_TOKEN must be set together",
     );
   return { baseUrl, token };
+}
+function monitorStatusConfig() {
+  const baseUrl = process.env.VOXELLINK_MONITOR_PUBLIC_URL?.replace(/\/$/, "");
+  if (!baseUrl) return null;
+  try {
+    const parsed = new URL(baseUrl);
+    if (!["http:", "https:"].includes(parsed.protocol)) throw new Error("scheme");
+    return parsed.toString().replace(/\/$/, "");
+  } catch {
+    throw new Error("VOXELLINK_MONITOR_PUBLIC_URL must be an HTTP(S) URL");
+  }
+}
+async function withMonitorStatus(server) {
+  return { ...server, monitor_status: await fetchMonitorStatus(server.id) };
+}
+async function fetchMonitorStatus(serverId) {
+  if (!monitorStatus) return null;
+  try {
+    const response = await fetch(
+      `${monitorStatus}/api/v1/public/servers/${encodeURIComponent(serverId)}`,
+      { signal: AbortSignal.timeout(2_000) },
+    );
+    if (!response.ok) return null;
+    const status = await response.json();
+    if (
+      typeof status?.status !== "string" ||
+      typeof status?.external_server_id !== "string" ||
+      status.external_server_id !== serverId
+    )
+      return null;
+    return status;
+  } catch (error) {
+    console.warn("Monitor status lookup failed", { serverId, error: String(error) });
+    return null;
+  }
 }
 async function flushMonitorImports() {
   if (!monitorImport || flushingMonitorImports) return;
